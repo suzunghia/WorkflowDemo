@@ -1,10 +1,234 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8" />
-<title>Workflow</title>
+	<title></title>
+
+	<!-- Ignite UI Required Combined CSS Files -->
+	<link href="http://cdn-na.infragistics.com/igniteui/2017.1/latest/css/themes/infragistics/infragistics.theme.css" rel="stylesheet" />
+	<link href="http://cdn-na.infragistics.com/igniteui/2017.1/latest/css/structure/infragistics.css" rel="stylesheet" />
+
+	<script src="http://ajax.aspnetcdn.com/ajax/modernizr/modernizr-2.8.3.js"></script>
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+
+<!-- Ignite UI Required Combined JavaScript Files -->
+	<script src="http://cdn-na.infragistics.com/igniteui/2017.1/latest/js/infragistics.core.js"></script>
+	<script src="http://cdn-na.infragistics.com/igniteui/2017.1/latest/js/infragistics.lob.js"></script>
+		<script type="text/javascript">
+		$(function () {
+			var employees = [
+		  {
+		  	"EmployeeID": "56250fa57ab1535722e564a6",
+		  	"FirstName": "Nghia",
+		  	"LastName": "Ngo",
+		  	"Country": "DaNang",
+		  	"Age": 26,
+		  	"RegistererDate": "01/01/2017",
+		  	"IsActive": true
+		  },
+		  {
+		  	"EmployeeID": "56250fa5c0fd04f12555d44d",
+		  	"FirstName": "TEST",
+		  	"LastName": "TEST123",
+		  	"Country": "USA",
+		  	"Age": 26,
+		  	"RegistererDate": "09/22/2014",
+		  	"IsActive": false
+		  },
+		  {
+		  	"EmployeeID": "56250fa565a7bcc21f6bd15e",
+		  	"FirstName": "Thanh",
+		  	"LastName": "Doan",
+		  	"Country": "DaNang",
+		  	"Age": 30,
+		  	"RegistererDate": "01/01/2017",
+		  	"IsActive": true
+		  },
+		  {
+		  	"EmployeeID": "56250fa5d71a83c33f3f6479",
+		  	"FirstName": "Sheppard",
+		  	"LastName": "Nicholson",
+		  	"Country": "Italy",
+		  	"Age": 49,
+		  	"RegistererDate": "06/28/2014",
+		  	"IsActive": false
+		  },
+		  {
+		  	"EmployeeID": "56250fa546abbe8c616d37eb",
+		  	"FirstName": "Bettye",
+		  	"LastName": "Trujillo",
+		  	"Country": "Canada",
+		  	"Age": 37,
+		  	"RegistererDate": "04/19/2015",
+		  	"IsActive": false
+		  },
+		  {
+		  	"EmployeeID": "56250fa535809820f2c44291",
+		  	"FirstName": "Joyce",
+		  	"LastName": "Vaughan",
+		  	"Country": "USA",
+		  	"Age": 48,
+		  	"RegistererDate": "04/24/2014",
+		  	"IsActive": false
+		  },
+		  {
+		  	"EmployeeID": "56250fa5732f6adc0b52ace0",
+		  	"FirstName": "Janine",
+		  	"LastName": "Munoz",
+		  	"Country": "USA",
+		  	"Age": 59,
+		  	"RegistererDate": "02/09/2014",
+		  	"IsActive": true
+		  },
+		  {
+		  	"EmployeeID": "56250fa540b15dfd507cffb9",
+		  	"FirstName": "Betsy",
+		  	"LastName": "Short",
+		  	"Country": "USA",
+		  	"Age": 26,
+		  	"RegistererDate": "06/04/2015",
+		  	"IsActive": false
+		  },
+		  {
+		  	"EmployeeID": "56250fa624c71485db41cf01",
+		  	"FirstName": "Hannah",
+		  	"LastName": "Crosby",
+		  	"Country": "USA",
+		  	"Age": 34,
+		  	"RegistererDate": "06/02/2015",
+		  	"IsActive": false
+		  }
+		];
+			var f = true, ds, schema;
+
+			schema = new $.ig.DataSchema("array", {
+				fields: [
+					{ name: "FirstName", type: "string" },
+					{ name: "LastName", type: "string" },
+					{
+						name: "RegistererDate", type: "date", formatter: function (value, record) {
+							return value.toLocaleDateString();
+						}
+					},
+					{ name: "Country", type: "string" },
+					{ name: "Age", type: "number" },
+					{ name: "IsActive", type: "bool" }
+				],
+			});
+			ds = new $.ig.DataSource({
+				dataSource: employees,
+				schema: schema,
+				filtering: {
+					type: "local"
+				}
+			}).dataBind();
+
+			$("#filterType").igCombo({
+				mode: "dropdown",
+				textKey: "text",
+				valueKey: "value",
+				dataSource: [
+					{ value: "Simple Filtering", text: "Simple Filtering" },
+					{ value: "Search By Text", text: "Search By Text" }
+				],
+				initialSelectedItems : [
+					{ value: "Simple Filtering" }
+				],
+				selectionChanged: function (evt, args) {
+					f = args.items[0].data.value === "Simple Filtering";
+					createSimpleFilteringGrid(f, ds);
+				}
+			});
+			$(document).delegate("#gridSimpleFiltering", "igcontrolcreated", function (evt, args) {
+				if (!f) {
+					createSearchField(args.owner, ds);
+				}
+			});
+			createSimpleFilteringGrid(f, ds);
+		});
+		function createSearchField(grid, ds) {
+			var upperPager = grid.container().find(".ui-iggrid-pagesizedropdowncontainerabove"),
+				field = $('<input id="filterByText" />');
+
+			upperPager.prepend(field);
+			field.igTextEditor({
+				placeHolder: "Search...",
+				height: "22px",
+				textChanged: function (evt, args) {
+					ds.filterByText(args.text);
+					$(grid.element).igGrid("option", "dataSource", ds.dataView());
+				}
+			});
+		}
+		function createSimpleFilteringGrid(f, ds) {
+			var features = [
+					{
+						name: "Paging",
+						type: "local",
+						pageSize: 10
+					}
+			];
+
+			if (f) {
+				features.push({
+					name: "Filtering",
+					type: "local",
+					mode: "simple",
+					filterDialogContainment: "window",
+					columnSettings: [
+						{
+							columnKey: "FirstName",
+							condition: "startsWith"
+						},
+						{
+							columnKey: "LastName",
+							condition: "equals"
+						},
+						{
+							columnKey: "Country",
+							condition: "equals"
+						},
+						{
+							columnKey: "Age",
+							condition: "greaterThan"
+						}
+					]
+				});
+			}
+			if ($("#filterByText").length) {
+				if  ($("#searchField").data("igTextEditor")){
+					$("#filterByText").igTextEditor("destroy");
+					$("#filterByText").remove();
+					$("#searchLabel").remove();
+				}
+			}
+			if ($("#gridSimpleFiltering").data("igGrid")) {
+				$("#gridSimpleFiltering").igGrid("destroy");
+			}
+			$("#gridSimpleFiltering").igGrid({
+				autoGenerateColumns: false,
+				height: "400px",
+				columns: [
+					{ headerText: "First Name", key: "FirstName", dataType: "string" },
+					{ headerText: "Last Name", key: "LastName", dataType: "string" },
+					{ headerText: "Register Date", key: "RegistererDate", dataType: "date" },
+					{ headerText: "Country", key: "Country", dataType: "string" },
+					{ headerText: "Age", key: "Age", dataType: "number" },
+					{ headerText: "Is Active", key: "IsActive", dataType: "bool" }
+				],
+				dataSource: ds.dataView(),
+				responseDataKey: "results",
+				features: features
+			});
+		}
+	</script>
 </head>
 <body>
-    <h1 data-th-text="${msg}"></h1>
+	<!-- Target element for the Simple Filtering igGrid -->
+	<label>Switch Filtering Mode:</label>
+	<br />
+	<input type="text" id="filterType" />
+	<table id="gridSimpleFiltering"></table>
+	<br />
 </body>
 </html>
