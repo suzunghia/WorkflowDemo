@@ -28,38 +28,38 @@ public class CustomerController {
 	private CustomerRepository customerRepository;
 	
 	@Autowired
-    public void setProductService(CustomerRepository customerRepository) {
+    public void setCustomerRepository(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 	
 	@RequestMapping(value = "/customers", method = RequestMethod.POST)
-	public ResponseEntity<?>  createCustomer(            
+	public @ResponseBody Customer createCustomer(            
             @RequestParam(value="firstName", required=true) String firstName,
             @RequestParam(value="lastName", required=true) String lastName,
             @RequestParam(value="dateOfBirth", required=true) @DateTimeFormat(pattern="yyyy-MM-dd") Date dateOfBirth) {
         
 //        	CustomerImage customerImage = fileArchiveService.saveFileToS3(image);        	
-        	Customer customer = new Customer(firstName, lastName, dateOfBirth);
+        	Customer cus = new Customer(firstName, lastName, dateOfBirth);
         	
-        	customerRepository.save(customer);
-            return new ResponseEntity<Customer>(customer, HttpStatus.OK);               
+        	customerRepository.save(cus);
+            return cus;               
     }
 	
 	@RequestMapping(value = "/customers/{customerId}", method = RequestMethod.GET)
-	public ResponseEntity<?> getCustomer(@PathVariable("customerId") Long customerId) {
+	public Customer getCustomer(@PathVariable("customerId") Long customerId) {
 		
 		/* validate customer Id parameter */
 		if (null==customerId) {
 			throw new InvalidCustomerRequestException();
 		}
 		
-		Customer customer = customerRepository.findOne(customerId);
+		Customer cus = customerRepository.findOne(customerId);
 		
-		if(null==customer){
+		if(null==cus){
 			throw new CustomerNotFoundException();
 		}
 		
-		return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+		return cus;
 	}
 	
 	@RequestMapping(value = "/customers", method = RequestMethod.GET)
