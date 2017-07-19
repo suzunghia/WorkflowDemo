@@ -45,7 +45,7 @@
         	var formData = new FormData();
         	formData.append('firstName', customerModel.firstName);
         	formData.append('lastName', customerModel.lastName);
-        	formData.append('dateOfBirth', customerModel.dateOfBirth.getFullYear()  + '-' +  (customerModel.dateOfBirth.getMonth() + 1)  + '-' + customerModel.dateOfBirth.getDay());
+        	formData.append('dateOfBirth', customerModel.dateOfBirth.getFullYear()  + '-' +  ('0' + (customerModel.dateOfBirth.getMonth() + 1)).slice(-2)  + '-' + ('0' + (customerModel.dateOfBirth.getDate())).slice(-2));
         		
         	$scope.saving=true;
         	$http.post('/customers', formData, {	
