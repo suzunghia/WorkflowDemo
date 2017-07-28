@@ -1,0 +1,21 @@
+<!-- <h1 *ngIf = 'status'>
+  {{title}}
+</h1>
+<div *ngFor = 'let lst of iproducts'>
+   <ul>
+      <li>{{lst.ID}}</li>
+      <img [src] = 'lst.url'>
+   </ul>
+</div>
+<div *ngFor = 'let lst of iproducts'>
+   <ul>
+      <li>{{lst.ProductID}}</li>
+      <li>{{lst.ProductName}}</li>
+   </ul>
+</div> -->
+
+<ul>
+  <li><a [routerLink] = "['/Product']">Product</a></li>
+  <li><a [routerLink] = "['/Inventory']">Inventory</a></li>
+</ul>
+<router-outlet></router-outlet>
